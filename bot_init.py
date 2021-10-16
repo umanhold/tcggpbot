@@ -7,7 +7,7 @@ import io
 import os
 import time
 from pandas.core.common import flatten
-from definitions import (TOKEN, confirm, reject, conversation, SHORT_SLEEP, LONG_SLEEP, PATH)
+from definitions import (TOKEN, confirm, reject, conversation, SHORT_SLEEP, LONG_SLEEP, CAL_FOLDER)
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
@@ -143,7 +143,7 @@ def age(update, context):
 		answer(text, None, LONG_SLEEP, context, m)
 
 		# send calendar file
-		with open(PATH+'/cal.ics', 'rb') as f:
+		with open(CAL_FOLDER+'/cal.ics', 'rb') as f:
 			context.bot.send_document(m.chat_id,f,name)
 		answer(conversation['sent'], None, SHORT_SLEEP, context, m)
 

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, time
 import pytz
 import os
 import re
-from definitions import week_days, PATH
+from definitions import week_days, CAL_FOLDER
 
 def dtstr2dtaw(string, tz):
 	""" takes date string (%d.%m.%Y %H:%M) and returns aware datetime """
@@ -166,6 +166,6 @@ def ical(data, team, season, name):
 		cal.add_component(event)
 
 	# create ical file
-	f = open(PATH+'/'+name+'.ics', 'wb')
+	f = open(CAL_FOLDER+'/'+name+'.ics', 'wb')
 	f.write(cal.to_ical())
 	f.close()

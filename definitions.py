@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-TOKEN, PATH = os.environ['TOKEN'], os.environ['PATH']
+TOKEN, CAL_FOLDER = os.environ['TOKEN'], os.environ['CAL_FOLDER']
 confirm = ['yes','y','ja','j','si','sim']
 reject = ['no','n','nein']
 
