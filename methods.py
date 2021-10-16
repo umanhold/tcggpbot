@@ -166,7 +166,6 @@ def ical(data, team, season, name):
 		cal.add_component(event)
 
 	# create ical file
-	os.chdir(PATH)
-	f = open(name+'.ics', 'wb')
+	f = open(PATH+'/'+name+'.ics', 'wb')
 	f.write(cal.to_ical())
 	f.close()
