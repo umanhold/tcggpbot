@@ -143,7 +143,7 @@ def age(update, context):
 		answer(text, None, LONG_SLEEP, context, m)
 
 		# send calendar file
-		with open(path+'/cal.ics', 'rb') as f:
+		with open(PATH+'/cal.ics', 'rb') as f:
 			context.bot.send_document(m.chat_id,f,name)
 		answer(conversation['sent'], None, SHORT_SLEEP, context, m)
 
