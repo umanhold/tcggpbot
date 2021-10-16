@@ -8,8 +8,7 @@ from datetime import datetime, timedelta, time
 import pytz
 import os
 import re
-
-week_days = ['Mo.','Di.','Mi.','Do.','Fr.','Sa.','So.']
+from definitions import week_days, PATH
 
 def dtstr2dtaw(string, tz):
 	""" takes date string (%d.%m.%Y %H:%M) and returns aware datetime """
@@ -134,7 +133,7 @@ def dates(call, season):
 	return pd.DataFrame(data=dlist)
 
 
-def ical(data, team, season, name, path):
+def ical(data, team, season, name):
 
 	# initialize calender object
 	cal = Calendar()
@@ -167,7 +166,7 @@ def ical(data, team, season, name, path):
 		cal.add_component(event)
 
 	# create ical file
-	os.chdir(path)
+	os.chdir(PATH)
 	f = open(name+'.ics', 'wb')
 	f.write(cal.to_ical())
 	f.close()

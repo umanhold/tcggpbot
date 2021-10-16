@@ -19,3 +19,5 @@ conversation = {
 }
 
 SHORT_SLEEP, LONG_SLEEP = 1, 2
+
+week_days = ['Mo.','Di.','Mi.','Do.','Fr.','Sa.','So.']
