@@ -118,7 +118,7 @@ def age(update, context):
 
 		data = dates(call, season)
 
-		ical(data, m.text, season, 'cal', PATH)
+		ical(data, m.text, season, 'cal')
 
 		# calendar name to be send
 		index = df['season'].index[0]
