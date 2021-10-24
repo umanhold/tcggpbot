@@ -33,7 +33,7 @@ def teamabbrv(string):
 	string = string.replace('(4er)','').strip()
 	if string[0] in ['H','D']:
 		abbrv = string[0]
-		for i in range(1,len(string.split())):
+		for i in range(1, len(string.split())):
 			abbrv = abbrv+string.split()[i]
 		if abbrv == string[0]:
 			abbrv = string[0]+'00'
@@ -155,7 +155,7 @@ def ical(data, team, season, name):
 		if 'Winter' in season:
 			location = row['place']
 
-		summary = f'{teamabbrv(team)} {location} {opponent}'
+		summary = f'{team} {location} {opponent}'
 		start = dtstr2dtaw(row['date'], 'Europe/Berlin')
 		end = start + timedelta(minutes=300)
 
