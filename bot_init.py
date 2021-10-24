@@ -16,6 +16,47 @@ logger = logging.getLogger(__name__)
 
 SEASON, CATEGORY, AGE, RESTART, PAUSE = range(5)
 
+def send_cal(age, context, message):
+	''' send calendar file '''
+
+	season, category = context.chat_data['season'], context.chat_data['category']
+	df = teams()
+	df = df[df.season.eq(season)]
+	df = df[df.teamabbrv.eq(age)]
+	index = df['link'].index[0]
+	call = df['link'][index]
+
+	data = dates(call, season)
+
+	ical(data, age, season, 'cal')
+
+	# calendar name to be send
+	index = df['season'].index[0]
+	season = df['season'][index].split()
+	season = season[0][:2]+season[1][-2:]
+	name = age[0]+'_'+season+'.ics'
+
+	# preview of dates send in chat
+	text = 'Das sind die Spieltermine in der Kalenderdatei: \n'
+	for index, row in data.iterrows():
+		if 'TC Grün-Gold Pankow' in row['home']:
+			place = 'Heimspiel vs.	'
+			opponent = row['away']
+		else:
+			place = 'Auswärts vs.	'	
+			opponent = row['home']
+		string = row['date']+'	'+place+opponent
+		text = text+'\n'+string
+
+	answer(text, None, LONG_SLEEP, context, message)
+
+	# send calendar file
+	with open(CAL_FOLDER+'/cal.ics', 'rb') as f:
+		context.bot.send_document(message.chat_id, f, name)
+
+	# ask for restart
+	answer(conversation['restart'], [['Ja'],['Nein']], SHORT_SLEEP, context, message)
+
 def answer(text, reply_keyboard, sleep_time, context, message):
 	chat_id = message.chat_id
 	context.bot.send_chat_action(chat_id=chat_id, action=telegram.ChatAction.TYPING)
@@ -39,7 +80,6 @@ def start(update, context):
 
 	m = update.message
 	answer(conversation['start1']+f' {m.from_user.name}!', None, SHORT_SLEEP, context, m)
-	answer(conversation['start2'], None, SHORT_SLEEP, context, m)
 
 	df = teams()
 	season = df['season'].unique()
@@ -94,8 +134,16 @@ def category(update, context):
 		df = df[df.season.eq(season)]
 		df = df[df.category.eq(reply)]
 
-		answer(conversation['age'], [df['teamabbrv'].to_list()], SHORT_SLEEP, context, m)
-		return AGE
+		age = df['teamabbrv'].to_list()
+
+		if len(age) == 1:
+
+			send_cal(age[0], context, m)
+			return RESTART
+
+		else:
+			answer(conversation['age'], [age], SHORT_SLEEP, context, m)
+			return AGE
 
 	else:
 		force_keyboard_reply(context.chat_data['reply_keyboard'], context, m)
@@ -107,53 +155,10 @@ def age(update, context):
 	logger.info('age: %s', m.text)
 
 	if m.text in list(flatten(context.chat_data['reply_keyboard'])):
-
-		season = context.chat_data['season']
-		category = context.chat_data['category']
-		df = teams()
-		df = df[df.season.eq(season)]
-		df = df[df.teamabbrv.eq(m.text)]
-		index = df['link'].index[0]
-		call = df['link'][index]
-
-		data = dates(call, season)
-
-		ical(data, m.text, season, 'cal')
-
-		# calendar name to be send
-		index = df['season'].index[0]
-		season = df['season'][index].split()
-		season = season[0][:2]+season[1][-2:]
-		index = df['team'].index[0]
-		team = df['team'][index].split()
-		name = m.text+'_'+season+'.ics'
-
-		# preview of dates send in chat
-		text = 'Das sind die Spieltermine in der Kalenderdatei: \n'
-		for index, row in data.iterrows():
-			if 'TC Grün-Gold Pankow' in row['home']:
-				place = 'Heimspiel vs.	'
-				opponent = row['away']
-			else:
-				place = 'Auswärts vs.	'	
-				opponent = row['home']
-			string = row['date']+'	'+place+opponent
-			text = text+'\n'+string
-
-		answer(text, None, LONG_SLEEP, context, m)
-
-		# send calendar file
-		with open(CAL_FOLDER+'/cal.ics', 'rb') as f:
-			context.bot.send_document(m.chat_id,f,name)
-		answer(conversation['sent'], None, SHORT_SLEEP, context, m)
-
-		# ask for restart
-		answer(conversation['restart'], [['Ja'],['Nein']], SHORT_SLEEP, context, m)
-
+		send_cal(m.text, context, m)
 		return RESTART
 
 	else:
-
 		force_keyboard_reply(context.chat_data['reply_keyboard'], context, m)
 		return AGE
 
